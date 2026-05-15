@@ -1,4 +1,10 @@
 package com.ksantiago.springcloud.products.models;
 
-public record Command() {
-}
+import lombok.Builder;
+
+@Builder
+public record Command<T>(
+        String type,
+        Long id,
+        T body
+) { }
