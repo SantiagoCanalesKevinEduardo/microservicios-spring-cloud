@@ -1,5 +1,6 @@
 package com.ksantiago.springcloud.products.controller;
 
+import com.ksantiago.springcloud.products.models.Reply;
 import com.ksantiago.springcloud.products.models.dto.ProductDto;
 import com.ksantiago.springcloud.products.services.ProductCommandService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.Duration;
 import java.util.Map;
 
 @RestController
@@ -20,10 +22,12 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody ProductDto dto){
-        commandService.sendCreate(dto);
+        Reply<?> reply=  commandService.sendCreateAndAwait(dto, Duration.ofSeconds(5));
 
-        return ResponseEntity.ok().body(Map.of("message", "Success Sent"));
+        if("SUCCESS".equalsIgnoreCase(reply.status())){
+            return ResponseEntity.ok().body(reply.body());
+        }else{
+            return ResponseEntity.badRequest().body(Map.of("error",reply.message()));
+        }
     }
-
-
 }
