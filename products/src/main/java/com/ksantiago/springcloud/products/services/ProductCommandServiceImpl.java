@@ -4,7 +4,11 @@ import com.ksantiago.springcloud.products.models.Command;
 import com.ksantiago.springcloud.products.models.dto.ProductDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 
 @Service
@@ -18,7 +22,11 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         Command<ProductDto> cmd = Command.<ProductDto>builder().type("CREATE")
                 .body(productDto).build();
 
-        boolean isSend = bridge.send("commands-out-0", cmd);
+        String correlationId = UUID.randomUUID().toString();
+
+        Message<Command<ProductDto>> msg = MessageBuilder.withPayload(cmd)
+                .setHeader("correlationId", correlationId).build();
+        boolean isSend = bridge.send("commands-out-0", msg);
 
         if(!isSend){
             throw new IllegalStateException("No se pudo enviar el commando a kafka");

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ClientServiceImpl implements ClientService{
+public class ClientCommandServiceImpl implements ClientCommandService {
 
     private final StreamBridge bridge;
 
@@ -17,7 +17,7 @@ public class ClientServiceImpl implements ClientService{
         Command<ClientDto> cmd = Command.<ClientDto>builder().type("CREATE")
                 .body(dto).build();
 
-        boolean isSend = bridge.send("clients-out-0", dto);
+        boolean isSend = bridge.send("clients-out-0", cmd);
 
         if(!isSend){
             throw new IllegalStateException("No se pudo enviar el commando de cliente a kafka");
