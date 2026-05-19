@@ -33,6 +33,33 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         var cmd = Command.<ProductDto>builder().type("CREATE")
                 .body(productDto).build();
 
+        return sendAndAwait(cmd, timeout);
+    }
+
+    @Override
+    public Reply<?> sendReadAndAwait(Long id, Duration timeout) {
+        var cmd = new Command<>("READ", id,null);
+        return sendAndAwait(cmd, timeout);
+    }
+
+    @Override
+    public Reply<?> sendReadAllAndAwait(Duration timeout) {
+        var cmd = new Command<>("READ ALL", null,null);
+        return sendAndAwait(cmd, timeout);
+    }
+
+    @Override
+    public Reply<?> sendDeleteAndAwait(Long id, Duration timeout) {
+        var cmd = new Command("DELETE", id, null);
+        return sendAndAwait(cmd,timeout);    }
+
+    @Override
+    public Reply<?> sendUpdateAndAwait(Long id, ProductDto productDto, Duration timeout) {
+        var cmd = new Command("UPDATE", id, productDto);
+        return sendAndAwait(cmd,timeout);
+    }
+
+    private Reply<?> sendAndAwait(Command<?> cmd, Duration timeout){
         String correlationId = UUID.randomUUID().toString();
 
         log.info("Correlation id : {}", correlationId);
@@ -41,7 +68,6 @@ public class ProductCommandServiceImpl implements ProductCommandService{
         var msg = MessageBuilder.withPayload(cmd)
                 .setHeader("correlationId", correlationId).build();
         boolean isSend = bridge.send("commands-out-0", msg);
-
         if(!isSend){
             throw new IllegalStateException("No se pudo enviar el commando a kafka");
         }

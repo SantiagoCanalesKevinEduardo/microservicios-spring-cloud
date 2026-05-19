@@ -35,33 +35,6 @@ public class ClientCommandConsumer {
             }
         };
     }
-    /*
-    *  public Consumer<Command<ProductDto>> handlerCommands(ProductService productService){
 
-
-
-        return command->{
-           String type= command.type() == null ? "" : command.type().toUpperCase();
-
-           switch (type){
-               case "CREATE" ->{
-                   if(command.body() == null ){
-                       log.warn("Empty body");
-                       return;
-                   }
-                   ProductDto productDto = productService.create(command.body());
-                   log.info("Creating product id= {}, name= {}, price = {}",productDto.id(), productDto.name(), productDto.price());
-               }
-               case "UPDATE"->{
-                   log.info("Updating product name= {}, price = {}", command.body().name(), command.body().price());
-               }
-               case "DELETE"->{
-                   log.info("Deleting product");
-               }
-               default -> {}
-           }
-
-        };
-    }*/
 
 }
