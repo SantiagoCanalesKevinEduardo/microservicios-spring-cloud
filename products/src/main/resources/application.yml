@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: products-api
+  cloud:
+    function:
+      definition: handlerReplies
+    stream:
+      kafka:
+        binder:
+          brokers: ${KAFKA_BROKERS:localhost:9092}
+        bindings:
+          handlerReplies-in-0:
+            consumer:
+              start-offset: latest
+      bindings:
+        commands-out-0:
+          destination: products.commands
+          content-type: application/json
+        clients-out-0:
+          destination: clients.commands
+          content-type: application/json
+        handlerReplies-in-0:
+          destination: products.replies
+          content-type: application/json
+          group: products-api
+
+server:
+  port: 8080
+
+logging:
+  level:
+    root: INFO
+    com.ksantiago.springcloud: DEBUG
